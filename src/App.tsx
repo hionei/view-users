@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import Stack from "@mui/material/Stack";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Table from "@mui/material/Table";
@@ -31,27 +31,26 @@ type UserType = {
   updatedAt: string;
 };
 function App() {
-  const [alignment, setAlignment] = React.useState("19");
   const [users, setUsers] = React.useState<UserType[]>([]);
-  const handleChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
-    setAlignment(newAlignment);
-  };
+  const [flareUsers, setFlareUsers] = React.useState<UserType[]>([]);
 
   React.useEffect(() => {
-    let apiUri = "";
-    if (alignment == "19") apiUri = API_URL[19];
-    if (alignment == "14") apiUri = API_URL[14];
-
     const getUsers = async () => {
-      const result = await axios.get(apiUri + "/view-users");
-      const usersData = result.data;
-      if (Array.isArray(usersData)) {
-        setUsers(usersData);
+      const result = await axios.get(API_URL[19] + "/view-users");
+      const usersDataSongbird = result.data;
+      if (Array.isArray(usersDataSongbird)) {
+        setUsers(usersDataSongbird);
+      }
+
+      const resultFlare = await axios.get(API_URL[14] + "/view-users");
+      const usersDataFlare = resultFlare.data;
+      if (Array.isArray(usersDataFlare)) {
+        setFlareUsers(usersDataFlare);
       }
     };
 
     getUsers();
-  }, [alignment]);
+  }, []);
 
   const calculateAgoTime = (timeString: string) => {
     const date = Number(new Date(timeString).getTime() / 1000).toFixed();
@@ -65,11 +64,7 @@ function App() {
   };
   return (
     <>
-      <div>
-        <ToggleButtonGroup color="primary" value={alignment} exclusive onChange={handleChange} aria-label="Platform">
-          <ToggleButton value="19">Songbird</ToggleButton>
-          <ToggleButton value="14">Flare</ToggleButton>
-        </ToggleButtonGroup>
+      <Stack direction="row" spacing={2}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -94,7 +89,32 @@ function App() {
             </TableBody>
           </Table>
         </TableContainer>
-      </div>
+
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>No</TableCell>
+                <TableCell align="right">Address</TableCell>
+                <TableCell align="right">Joined</TableCell>
+                <TableCell align="right">Last Used</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {flareUsers.map((row: UserType, index) => (
+                <TableRow key={row.address} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                  <TableCell component="th" scope="row">
+                    {index}
+                  </TableCell>
+                  <TableCell align="right">{row.address}</TableCell>
+                  <TableCell align="right">{calculateAgoTime(row.createdAt)}</TableCell>
+                  <TableCell align="right">{calculateAgoTime(row.updatedAt)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Stack>
     </>
   );
 }
