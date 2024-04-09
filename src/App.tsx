@@ -32,7 +32,7 @@ type UserType = {
 };
 function App() {
   const [alignment, setAlignment] = React.useState("19");
-  const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState<UserType[]>([]);
   const handleChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
     setAlignment(newAlignment);
   };
