@@ -11,7 +11,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
 import "./App.css";
-const API_URL = { 19: "https://flareuniverse.xyz/songbird-api", 14: "https://flareuniverse.xyz/flare-api" };
+const API_URL = { 19: "https://app.flareuniverse.xyz/songbird-api", 14: "https://app.flareuniverse.xyz/flare-api" };
 
 function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
   return { name, calories, fat, carbs, protein };
